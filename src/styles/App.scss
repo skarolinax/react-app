@@ -1,3 +1,14 @@
+@use "variables" as *;
+
 h1 {
-    font-size: 200px;
+    font-size: 7rem;
+    color: $dark-pink;
+}
+
+#todo-container {
+    background-color: white;
+    border-radius: 10px;
+    border:1px solid $dark-pink;
+    width: 50%;
+    height: 1000px;
 }

@@ -1,3 +1,12 @@
 h1 {
-  font-size: 200px;
+  font-size: 7rem;
+  color: #FC809F;
+}
+
+#todo-container {
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid #FC809F;
+  width: 50%;
+  height: 1000px;
 }/*# sourceMappingURL=App.css.map */
