@@ -15,4 +15,32 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.modal-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 2px solid #FC809F;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+.modal-window h2 {
+  margin-bottom: 20px;
+  color: #FC809F;
+  text-align: center;
+}
+
+.overlay-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }/*# sourceMappingURL=index.css.map */
