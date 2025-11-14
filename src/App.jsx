@@ -1,12 +1,14 @@
 import './styles/App.scss'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState } from 'react'
+import { useRef } from 'react';
 
 function App() { 
 
   const [input, setInput] = useState('');
   const [tasks, setTasks] = useState([]);
   const [doneTasks, setDoneTasks] = useState([]);
+  const jsConfetti = new JSConfetti()
 
   function addTask() { 
     console.log('Adding task:', input);
@@ -23,6 +25,7 @@ function App() {
 
   function markAsDone(index) {
     console.log('Marking task as done at index:', index);
+    jsConfetti.addConfetti({emojis: ['🌈', '⚡️', '✨', '💫', '🌸'],});
     const taskMarkedDone = tasks[index];
     setDoneTasks([...doneTasks, taskMarkedDone]);
     deleteTask(index);
@@ -30,12 +33,17 @@ function App() {
 
   return (
       <div className="todo-app">
-          <h1>To Do App</h1>
+          <h1>Today's tasks</h1>
           <div id="todo-container">
             <div id="input-container">
               <input
                 type="text"
                 value={input}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    addTask();
+                  }
+                }}
                 onChange={(e) => setInput(e.target.value)}
                 id="todo-input" placeholder="Add a new task..." />
               <button id="add-button" onClick={addTask}>Add task</button>
@@ -43,7 +51,7 @@ function App() {
             <ul id="todo-list">
               {tasks.map((task, index) => (
                 <li key={index}>{task}
-                  <button onClick={() => deleteTask(index)}>Delete</button>
+                  <button onClick={() => deleteTask(index)} aria-label='Delete task' id='primary-btn'><i className="fa-solid fa-trash"></i></button>
                   <button onClick={() => markAsDone(index)}>Done</button>
                 </li>
               ))}

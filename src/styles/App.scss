@@ -4,6 +4,34 @@ h1 {
     font-size: 7rem;
     color: $dark-pink;
     text-align: center;
+    -webkit-text-stroke: 1px white;
+}
+
+#input-container {
+    display: flex;
+    justify-content: center;
+
+    input {
+        padding: 10px;
+        border: 2px solid $dark-pink;
+        border-radius: 10px;
+        width: 70%;
+        font-size: 16px;
+    }
+    button {
+        margin-left: 10px;
+        background-color: $dark-pink;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $medium-pink;
+            color: $dark-pink
+        }
+    }
 }
 
 #todo-container {
@@ -11,6 +39,7 @@ h1 {
     border-radius: 10px;
     border: 1px solid $dark-pink;
     padding: 20px;
+    margin-bottom: 20px;
 
 }
 
@@ -24,7 +53,10 @@ h1 {
 
 #todo-list {
     list-style: none;
-    @extend %li-style;
+
+    li {
+        @extend %li-style;
+    }
 }
 
 #done-container {
@@ -37,5 +69,23 @@ h1 {
     li {
         @extend %li-style;
         color: $dark-pink;
+        text-decoration: line-through;
+    }
+}
+
+#primary-btn {
+    background-color: transparent;
+    border: 2px solid $dark-pink;
+    color: $dark-pink;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+
+    &:hover {
+        background-color: $dark-pink;
+        color: white;
     }
 }
