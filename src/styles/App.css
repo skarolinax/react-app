@@ -1,9 +1,13 @@
 @charset "UTF-8";
 h1 {
-  font-size: 7rem;
+  font-size: 6rem;
   color: #FC809F;
   text-align: center;
   -webkit-text-stroke: 1px white;
+}
+
+.todo-app {
+  padding: 10px;
 }
 
 #input-container {
@@ -38,6 +42,10 @@ h1 {
   border: 1px solid #FC809F;
   padding: 20px;
   margin-bottom: 20px;
+}
+#todo-container h3 {
+  margin-top: 40px;
+  text-align: center;
 }
 
 #done-container li, #todo-list li {

@@ -1,6 +1,6 @@
 import './styles/App.scss'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import Modal from './Modal.jsx';
 
 function App() { 
@@ -10,6 +10,7 @@ function App() {
   const [doneTasks, setDoneTasks] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
+  const [showMessage, setShowMessage] = useState(true);
 
   const jsConfetti = new JSConfetti()
 
@@ -19,6 +20,13 @@ function App() {
       const timer = setTimeout(() => setShowModal(false), 3000);
       return () => clearTimeout(timer);
     }}, [tasks, doneTasks]);
+
+  useEffect(() => {
+    if (tasks.length === 0) {
+      setShowMessage(true)
+    } else {
+      setShowMessage(false);
+    }}, [tasks]);
 
   function addTask() { 
     console.log('Adding task:', input);
@@ -47,7 +55,6 @@ function App() {
           {showModal ? <Modal /> : null} 
 
           <div id="todo-container">
-
             <div id="input-container">
               <input
                 type="text"
@@ -62,7 +69,9 @@ function App() {
               <button id="add-button" onClick={addTask}>Add task</button>
             </div>
 
+            {showMessage ? <h3>So empty.. add new tasks now!</h3> : null}
             <ul id="todo-list">
+
               {tasks.map((task, index) => (
                 <li key={index}>
                   <label>
@@ -70,8 +79,7 @@ function App() {
                     <input 
                       type="checkbox"
                       onChange={() => markAsDone(index)}
-                      aria-label={`Mark task ${task} as done`}>
-                    </input>
+                      aria-label={`Mark task ${task} as done`}/>
                     <p>{task}</p>
                   </label>
                   <button onClick={() => deleteTask(index)} aria-label='Delete task' id='primary-btn'>

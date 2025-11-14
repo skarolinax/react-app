@@ -1,10 +1,14 @@
 @use "variables" as *;
 
 h1 {
-    font-size: 7rem;
+    font-size:6rem;
     color: $dark-pink;
     text-align: center;
     -webkit-text-stroke: 1px white;
+}
+
+.todo-app {
+    padding: 10px;
 }
 
 #input-container {
@@ -18,6 +22,7 @@ h1 {
         width: 70%;
         font-size: 16px;
     }
+
     button {
         margin-left: 10px;
         background-color: $dark-pink;
@@ -41,6 +46,11 @@ h1 {
     border: 1px solid $dark-pink;
     padding: 20px;
     margin-bottom: 20px;
+
+     h3 {
+        margin-top: 40px;
+        text-align: center;
+    }
 
 }
 
