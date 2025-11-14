@@ -1,38 +1,64 @@
 import './styles/App.scss'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState } from 'react'
 
 function App() { 
 
   const [input, setInput] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [doneTasks, setDoneTasks] = useState([]);
 
   function addTask() { 
+    console.log('Adding task:', input);
     if (input.trim() === '') return; // prevent adding empty tasks
     setTasks([...tasks, input]);
     setInput(''); // clear input field after adding
+  };
+
+  function deleteTask(index) {
+    console.log('Deleting task at index:', index);
+    const newTasks = tasks.filter((_, i) => i !== index);
+    setTasks(newTasks);
   }
-  
+
+  function markAsDone(index) {
+    console.log('Marking task as done at index:', index);
+    const taskMarkedDone = tasks[index];
+    setDoneTasks([...doneTasks, taskMarkedDone]);
+    deleteTask(index);
+  }
+
   return (
-    <div className="todo-app">
-      <h1>To Do App</h1>
+      <div className="todo-app">
+          <h1>To Do App</h1>
+          <div id="todo-container">
+            <div id="input-container">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                id="todo-input" placeholder="Add a new task..." />
+              <button id="add-button" onClick={addTask}>Add task</button>
+            </div>
+            <ul id="todo-list">
+              {tasks.map((task, index) => (
+                <li key={index}>{task}
+                  <button onClick={() => deleteTask(index)}>Delete</button>
+                  <button onClick={() => markAsDone(index)}>Done</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div id="done-container">
+            <h2>Done</h2>
+            <ul id="done-list">
+              {doneTasks.map((taskMarkedDone, index) => (
+                <li key={index}>{taskMarkedDone}</li>
+              ))}
+            </ul>
+          </div>
+        </div>      
 
-      <div id="todo-container">
-        <div id="input-container">
-          <input 
-            type="text" 
-            value={input}   
-            onChange={(e) => setInput(e.target.value)}  // update state on typing
-            id="todo-input" placeholder="Add a new task..." />
-          <button id="add-button" onClick={addTask}>Add task</button>
-        </div>
-
-        <ul id="todo-list">
-          {tasks.map((task, index) => (
-            <li key={index}>{task}</li>
-          ))}
-        </ul>
-      </div>
-    </div>
   )
 }
 

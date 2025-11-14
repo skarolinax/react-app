@@ -3,12 +3,39 @@
 h1 {
     font-size: 7rem;
     color: $dark-pink;
+    text-align: center;
 }
 
 #todo-container {
     background-color: white;
     border-radius: 10px;
-    border:1px solid $dark-pink;
-    width: 50%;
-    height: 1000px;
+    border: 1px solid $dark-pink;
+    padding: 20px;
+
+}
+
+%li-style {
+    padding: 10px;
+    background-color: $light-pink;
+    border: 1px solid $dark-pink;
+    margin-block: 15px;
+    border-radius: 10px;
+}
+
+#todo-list {
+    list-style: none;
+    @extend %li-style;
+}
+
+#done-container {
+    background-color: $dark-pink;
+    border-radius: 10px;
+    border: 1px solid white;
+    padding: 20px;
+    color: $light-pink;
+
+    li {
+        @extend %li-style;
+        color: $dark-pink;
+    }
 }

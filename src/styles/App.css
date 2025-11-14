@@ -1,12 +1,35 @@
 h1 {
   font-size: 7rem;
   color: #FC809F;
+  text-align: center;
 }
 
 #todo-container {
   background-color: white;
   border-radius: 10px;
   border: 1px solid #FC809F;
-  width: 50%;
-  height: 1000px;
+  padding: 20px;
+}
+
+#done-container li, #todo-list {
+  padding: 10px;
+  background-color: #FFE9EF;
+  border: 1px solid #FC809F;
+  margin-block: 15px;
+  border-radius: 10px;
+}
+
+#todo-list {
+  list-style: none;
+}
+
+#done-container {
+  background-color: #FC809F;
+  border-radius: 10px;
+  border: 1px solid white;
+  padding: 20px;
+  color: #FFE9EF;
+}
+#done-container li {
+  color: #FC809F;
 }/*# sourceMappingURL=App.css.map */
