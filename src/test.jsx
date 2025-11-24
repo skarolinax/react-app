@@ -1,47 +1,52 @@
 import { db } from './firebaseConfig.js';
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc, getDocs } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
+// Function to add a to-do task to "tasks to do" collection
 export async function addTaskToDo(title) {
-
+  const id = uuidv4(); // generate a unique ID
     try {
-      const docRef = await addDoc(collection(db, "tasks to do"), {
+      await setDoc(doc(db, "tasks to do", id), {
         title,
         done: false,
         timestamp: new Date()
       });
-      console.log("Task added with ID: ", docRef.id);
-      return docRef.id;
+      console.log("Task added with ID: ", id);
+      return id;
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error adding task to do: ", e);
     }
 };
 
-export async function addTaskToDone(title) {
+// Function to add a done task to "tasks done" collection
+
+export async function addTaskToDone(id, title) {
 
     try {
-      const docRef = await addDoc(collection(db, "tasks done"), {
+      await setDoc(doc(db, "tasks done", id), {
         title,
         done: true,
         timestamp: new Date()
       });
-      console.log("Task with ID done ", docRef.id);
-      return docRef.id;
+      console.log("Task with ID done ", id);
+      return id;
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error adding done task: ", e);
     }
 };
 
-export async function addTaskToDeleted(title) {
+// Function to add a deleted task to "tasks deleted" collection
+export async function addTaskToDeleted(id, title) {
 
     try {
-      const docRef = await addDoc(collection(db, "tasks deleted"), {
+      await setDoc(doc(db, "tasks deleted", id), {
         title,
         timestamp: new Date()
       });
-      console.log("Task with ID deleted ", docRef.id);
-      return docRef.id;
+      console.log("Task with ID moved to deleted ", id);
+      return id;
     } catch (e) {
-      console.error("Error adding document: ", e);
+      console.error("Error adding deleted task: ", e);
     }
 };
 

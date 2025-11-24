@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { use, useEffect, useState } from 'react'
 import Modal from './Modal.jsx';
 
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 
 import { addTaskToDo, addTaskToDone, addTaskToDeleted, fetchTasksFromDb } from './test';
@@ -52,11 +52,11 @@ function App() {
   };
 
   async function deleteTask(index) {
-    const taskToDelete = tasks[index];
-    console.log('Deleting task at index:', index, 'Task:', taskToDelete.title);
+    const task = tasks[index];
+    console.log('Deleting task at index:', index, 'Task:', task.title);
     
-    await addTaskToDeleted(taskToDelete.title); // Add to deleted collection in Firebase
-    await deleteDoc(doc(db, "tasks to do", taskToDelete.id)); // Delete from Firebase
+    await addTaskToDeleted(task.id, task.title); // Add to deleted collection in Firebase
+    await deleteDoc(doc(db, "tasks to do", task.id)); // Delete from Firebase
 
     const newTasks = tasks.filter((_, i) => i !== index);
     setTasks(newTasks);
@@ -67,7 +67,7 @@ function App() {
     jsConfetti.addConfetti({emojis: ['🌈', '⚡️', '✨', '💫', '🌸'],}); //Load confetti package 
     const task = tasks[index];
 
-    await addTaskToDone(task.title); // Add to done collection in Firebase
+    await addTaskToDone(task.id, task.title); // Add to done collection in Firebase
     await deleteDoc(doc(db, "tasks to do", task.id)); // Remove from to do collection in Firebase
 
     setDoneTasks([...doneTasks, task.title]);
