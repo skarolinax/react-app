@@ -6,7 +6,7 @@ import Modal from './Modal.jsx';
 import { collection, addDoc, getDocs, doc, updateDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 
-import { addTaskToDo, addTaskToDone, addTaskToDeleted, fetchTasksFromDb } from './test';
+import { addTaskToDo, addTaskToDone, addTaskToDeleted, fetchTasksFromDb, fetchDoneTasksFromDb } from './test';
 
 function App() { 
 
@@ -19,6 +19,7 @@ function App() {
 
   const jsConfetti = new JSConfetti()
 
+  //Fetch tasks from Firestore to display on load
   useEffect(() => {
     async function loadTasks() {
       const tasksFromDb = await fetchTasksFromDb();
@@ -27,12 +28,21 @@ function App() {
     loadTasks();
   }, []);
 
+  //Fetch done tasks from Firestore to display on load
   useEffect(() => {
-    if (tasks.length === 0 && doneTasks.length > 0) { // Show modal when all tasks are done (and there was at least one task done)
+    async function loadDoneTasks() {
+      const doneTasksFromDb = await fetchDoneTasksFromDb();
+      setDoneTasks(doneTasksFromDb);
+    }
+    loadDoneTasks();
+  }, []);
+
+  useEffect(() => {
+    if (tasks.length === 0 && doneTasks.length > 0) { // Show modal when all tasks are done
       setShowModal(true);
-      const timer = setTimeout(() => setShowModal(false), 3000);
+      const timer = setTimeout(() => setShowModal(false), 2000);
       return () => clearTimeout(timer);
-    }}, [tasks, doneTasks]);
+    }}, [tasks]);
 
   useEffect(() => {
     if (tasks.length === 0) {
@@ -55,11 +65,11 @@ function App() {
     const task = tasks[index];
     console.log('Deleting task at index:', index, 'Task:', task.title);
     
-    await addTaskToDeleted(task.id, task.title); // Add to deleted collection in Firebase
-    await deleteDoc(doc(db, "tasks to do", task.id)); // Delete from Firebase
-
     const newTasks = tasks.filter((_, i) => i !== index);
     setTasks(newTasks);
+
+    await addTaskToDeleted(task.id, task.title); // Add to deleted collection in Firebase
+    await deleteDoc(doc(db, "tasks to do", task.id)); // Delete from Firebase
   }
 
   async function markAsDone(index) {
@@ -67,12 +77,34 @@ function App() {
     jsConfetti.addConfetti({emojis: ['🌈', '⚡️', '✨', '💫', '🌸'],}); //Load confetti package 
     const task = tasks[index];
 
+    setDoneTasks([...doneTasks,{id: task.id, title: task.title, doneAt:Date.now()}]);
+    setTasks(tasks.filter((_, i) => i !== index));
+
     await addTaskToDone(task.id, task.title); // Add to done collection in Firebase
     await deleteDoc(doc(db, "tasks to do", task.id)); // Remove from to do collection in Firebase
 
-    setDoneTasks([...doneTasks, task.title]);
-    setTasks(tasks.filter((_, i) => i !== index));
   }
+
+  // Auto remove the done list after midnight
+  useEffect(() => {
+    if (doneTasks.length === 0) return;
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+      setDoneTasks(prev => {
+        const stillValid = prev.filter(task => task.doneAt >= today );
+        const expiredDoneTask = prev.filter(task => task.doneAt < today);
+        expiredDoneTask.forEach(async task => {
+          await deleteDoc(doc(db, "tasks done", task.id)); // Remove from Firebase
+        });
+         return stillValid;});
+      }, 100); // Check every 100ms
+      return () => {
+        clearInterval(interval)
+      }
+    }, [doneTasks.length]);
 
   return (
       <div className="todo-app">
@@ -119,8 +151,8 @@ function App() {
           <div id="done-container">
             <h2>Done</h2>
             <ul id="done-list">
-              {doneTasks.map((taskMarkedDone, index) => (
-                <li key={index}>{taskMarkedDone}</li>
+              {doneTasks.map(task => (
+                <li key={task.id}>{task.title}</li>
               ))}
             </ul>
           </div>
