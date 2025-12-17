@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const openai = new OpenAI({
-  apiKey: process.envOPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 app.post("/api/getAISuggestions", async (req, res) => {
@@ -20,15 +20,20 @@ app.post("/api/getAISuggestions", async (req, res) => {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [
-        { role: "user", content: `Suggest 3 tasks based on: ${recentTasks.join(", ")}` }
-      ],
-      max_tokens: 50
+       messages: [
+      {
+        role: "system",
+        content: "You are a task suggestion assistant. You must ONLY repeat or slightly vary the activities the user already does. Do NOT invent new tasks. Reply ONLY with task names, one per line. No bold, colons, numbering, explanations, or extra text. Each task must be 5 words or less."
+      },
+      {
+        role: "user",
+        content: `Here are recent activities: ${recentTasks.join(", ")}. Suggest one short task for each activity. Prefer repeating the same activity or small variations (e.g., 'reading in morning' for 'reading'). Reply ONLY in bullets, one per line. Do not merge activities.`
+      }
+    ]
     });
 
     const suggestions = response.choices[0].message.content
       .split("\n")
-      .map(t => t.replace(/^\d+\.?\s*/, ""));
 
     res.json({ suggestions });
   } catch (err) {

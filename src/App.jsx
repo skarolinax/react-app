@@ -58,7 +58,7 @@ function App() {
       setShowMessage(false);
     }}, [tasks]);
 
-  async function addTask(title = input) { 
+  async function addTask() { 
     console.log('Adding task:', input);
     if (input.trim() === '') return; // prevent adding empty tasks
 
@@ -80,21 +80,26 @@ function App() {
   }
 
   async function markAsDone(index) {
+    // Show confetti
     jsConfetti.addConfetti({ emojis: ['🌈', '⚡️', '✨'] });
 
     const task = tasks[index];
 
-    setDoneTasks(prev => [...prev, { ...task, doneAt: Date.now() }]);
+    // Update local state first
+    const updatedDoneTasks = [...doneTasks, task];
+    setDoneTasks(updatedDoneTasks);
     setTasks(prev => prev.filter((_, i) => i !== index));
 
+    // Update Firebase: add to done collection & remove from "to do"
     await addTaskToDone(task.id, task.title);
     await deleteDoc(doc(db, "tasks to do", task.id));
 
-    // Fetch AI suggestions based on recent done tasks
-    const recentTasks = [...doneTasks, task]
+    // Prepare recent tasks for AI suggestions (include latest task)
+    const recentTasks = updatedDoneTasks
       .slice(-5)
       .map(t => t.title);
 
+    // Fetch AI suggestions
     try {
       setLoadingSuggestions(true);
 
@@ -104,7 +109,6 @@ function App() {
         body: JSON.stringify({ recentTasks })
       });
 
-
       const data = await res.json();
       setAiSuggestions(data.suggestions);
 
@@ -113,7 +117,8 @@ function App() {
     } finally {
       setLoadingSuggestions(false);
     }
-  }
+}
+
 
   // Auto remove the done list after midnight
   // useEffect(() => {
@@ -167,7 +172,7 @@ function App() {
                   {aiSuggestions.map((task, index) => (
                     <li key={index}>
                       {task}
-                      <button onClick={() => addTask(task)}>Add</button>
+                     {/* <button onClick={() => addTask(task)}>Add</button>*/}
                     </li>
                   ))}
                 </ul>

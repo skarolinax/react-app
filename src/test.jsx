@@ -26,7 +26,7 @@ export async function addTaskToDone(id, title) {
       await setDoc(doc(db, "tasks done", id), {
         title,
         done: true,
-        timestamp: new Date()
+        completedAt: new Date()
       });
       console.log("Task with ID done ", id);
       return id;
