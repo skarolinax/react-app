@@ -27,13 +27,18 @@ app.post("/api/getAISuggestions", async (req, res) => {
       },
       {
         role: "user",
-        content: `Here are recent activities: ${recentTasks.join(", ")}. Suggest one short task for each activity. Prefer repeating the same activity or small variations (e.g., 'reading in morning' for 'reading'). Reply ONLY in bullets, one per line. Do not merge activities.`
+        content: `Here are 3 recent activities:  ${recentTasks.map(t => `"${t}"`).join("\n")}. Suggest the user 3 out of 5 possibilities. Prefer repeating the same activity or small variations (e.g., 'reading in morning' for 'reading'). Reply ONLY in bullets, one per line. Do not merge activities.`
       }
     ]
     });
 
     const suggestions = response.choices[0].message.content
       .split("\n")
+      .map(t => t.replace(/^[-\*\s]+/, "").trim()) // remove bullets/asterisks/spaces
+      .filter(t => t.length > 0); // remove empty lines
+
+        console.log("Raw AI output:", response.choices[0].message.content);
+        console.log("Cleaned suggestions:", suggestions);
 
     res.json({ suggestions });
   } catch (err) {
