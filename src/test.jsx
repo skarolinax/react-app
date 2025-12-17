@@ -62,3 +62,13 @@ export async function fetchTasksFromDb() {
   return tasksList;
 }
 
+export async function fetchDoneTasksFromDb() {
+  const doneTasksCol = collection(db, "tasks done"); // point to done collection
+  const q = query(doneTasksCol, orderBy("completedAt", "asc")); // order by timestamp
+  const tasksSnapshot = await getDocs(q); //pass the query
+  const doneTasksList = tasksSnapshot.docs.map(doc => ({
+    id: doc.id, // Firestore ID, needed for updates/deletes
+    title: doc.data().title,
+  }));
+  return doneTasksList;
+}
